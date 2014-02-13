@@ -18,8 +18,8 @@ if(isset($_REQUEST['status'])) { //Query string status has nothing to do with th
     $status='open'; //Defaulting to open
 }
 
-$sortOptions=array('id'=>'ticketID', 'name'=>'user.name', 'subject'=>'subject.value',
-                    'email'=>'email.address', 'status'=>'ticket.status', 'dept'=>'dept_name','date'=>'ticket.created');
+$sortOptions=array('id'=>'ticketID', 'name'=>'ticket.name', 'subject'=>'ticket.subject',
+                    'email'=>'ticket.email', 'status'=>'ticket.status', 'dept'=>'dept_name','date'=>'ticket.created');
 $orderWays=array('DESC'=>'DESC','ASC'=>'ASC');
 //Sorting options...
 $order_by=$order=null;
@@ -38,24 +38,13 @@ if($order_by && strpos($order_by,','))
 $x=$sort.'_sort';
 $$x=' class="'.strtolower($order).'" ';
 
-$qselect='SELECT ticket.ticket_id,ticket.ticketID,ticket.dept_id,isanswered, '
-    .'dept.ispublic, subject.value as subject, '
-    .'user.name, email.address as email, '
-    .'dept_name,ticket. status, ticket.source, ticket.created ';
-
-$dynfields='(SELECT entry.object_id, value FROM '.FORM_ANSWER_TABLE.' ans '.
-         'LEFT JOIN '.FORM_ENTRY_TABLE.' entry ON entry.id=ans.entry_id '.
-         'LEFT JOIN '.FORM_FIELD_TABLE.' field ON field.id=ans.field_id '.
-         'WHERE field.name = "%1$s" AND entry.object_type="T")';
-$subject_sql = sprintf($dynfields, 'subject');
+$qselect='SELECT ticket.ticket_id,ticket.ticketID,ticket.dept_id,isanswered, dept.ispublic, ticket.subject, ticket.name, ticket.email '.
+           ',dept_name,ticket. status, ticket.source, ticket.created ';
 
 $qfrom='FROM '.TICKET_TABLE.' ticket '
-      .' LEFT JOIN '.DEPT_TABLE.' dept ON (ticket.dept_id=dept.dept_id) '
-      .' LEFT JOIN '.USER_TABLE.' user ON user.id = ticket.user_id'
-      .' LEFT JOIN '.USER_EMAIL_TABLE.' email ON user.id = email.user_id'
-      .' LEFT JOIN '.$subject_sql.' subject ON ticket.ticket_id = subject.object_id ';
+      .' LEFT JOIN '.DEPT_TABLE.' dept ON (ticket.dept_id=dept.dept_id) ';
 
-$qwhere =' WHERE email.address='.db_input($thisclient->getEmail());
+$qwhere =' WHERE ticket.email='.db_input($thisclient->getEmail());
 
 if($status){
     $qwhere.=' AND ticket.status='.db_input($status);
@@ -69,7 +58,7 @@ if($search) {
     } else {//Deep search!
         $queryterm=db_real_escape($_REQUEST['q'],false); //escape the term ONLY...no quotes.
         $qwhere.=' AND ( '
-                ." subject.value LIKE '%$queryterm%'"
+                ." ticket.subject LIKE '%$queryterm%'"
                 ." OR thread.body LIKE '%$queryterm%'"
                 .' ) ';
         $deep_search=true;
@@ -102,7 +91,7 @@ $negorder=$order=='DESC'?'ASC':'DESC'; //Negate the sorting
 ?>
 <h1>My Tickets</h1>
 <br>
-<form action="tickets.php" method="get" id="ticketSearchForm">
+<form class="form-inline" action="tickets.php" method="get" id="ticketSearchForm">
     <input type="hidden" name="a"  value="search">
     <input type="text" name="q" size="20" value="<?php echo Format::htmlchars($_REQUEST['q']); ?>">
     <select name="status">
@@ -117,29 +106,28 @@ $negorder=$order=='DESC'?'ASC':'DESC'; //Negate the sorting
         <?php
         } ?>
     </select>
-    <input type="submit" value="Go">
+    <input type="submit" class="btn" value="Go">
 </form>
-<a class="refresh" href="<?php echo $_SERVER['REQUEST_URI']; ?>">Refresh</a>
-<table id="ticketTable" width="800" border="0" cellspacing="0" cellpadding="0">
+<a class="btn" href="<?php echo $_SERVER['REQUEST_URI']; ?>">Refresh</a>
+<table class="table table-striped">
     <caption><?php echo $showing; ?></caption>
     <thead>
         <tr>
-            <th width="70" nowrap>
+            <th>
                 <a href="tickets.php?sort=ID&order=<?php echo $negorder; ?><?php echo $qstr; ?>" title="Sort By Ticket ID">Ticket #</a>
             </th>
-            <th width="100">
+            <th>
                 <a href="tickets.php?sort=date&order=<?php echo $negorder; ?><?php echo $qstr; ?>" title="Sort By Date">Create Date</a>
             </th>
-            <th width="80">
+            <th>
                 <a href="tickets.php?sort=status&order=<?php echo $negorder; ?><?php echo $qstr; ?>" title="Sort By Status">Status</a>
             </th>
-            <th width="300">
+            <th>
                 <a href="tickets.php?sort=subj&order=<?php echo $negorder; ?><?php echo $qstr; ?>" title="Sort By Subject">Subject</a>
             </th>
-            <th width="150">
+            <th>
                 <a href="tickets.php?sort=dept&order=<?php echo $negorder; ?><?php echo $qstr; ?>" title="Sort By Department">Department</a>
             </th>
-            <th width="100">Phone Number</th>
         </tr>
     </thead>
     <tbody>
@@ -172,7 +160,6 @@ $negorder=$order=='DESC'?'ASC':'DESC'; //Negate the sorting
                     <a href="tickets.php?id=<?php echo $row['ticketID']; ?>"><?php echo $subject; ?></a>
                 </td>
                 <td>&nbsp;<?php echo Format::truncate($dept,30); ?></td>
-                <td><?php echo $phone; ?></td>
             </tr>
         <?php
         }
@@ -183,8 +170,10 @@ $negorder=$order=='DESC'?'ASC':'DESC'; //Negate the sorting
     ?>
     </tbody>
 </table>
+<div class="pagination"><ul>
 <?php
 if($res && $num>0) {
-    echo '<div>&nbsp;Page:'.$pageNav->getPageLinks().'&nbsp;</div>';
+    echo '<li>'.$pageNav->getPageLinks().'</li>';
 }
 ?>
+</ul></div>

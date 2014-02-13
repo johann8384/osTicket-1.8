@@ -3,83 +3,74 @@ $title=($cfg && is_object($cfg) && $cfg->getTitle())?$cfg->getTitle():'osTicket 
 header("Content-Type: text/html; charset=UTF-8\r\n");
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title><?php echo Format::htmlchars($title); ?></title>
-    <meta name="description" content="customer support platform">
-    <meta name="keywords" content="osTicket, Customer support system, support ticket system">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/osticket.css" media="screen">
-    <link rel="stylesheet" href="<?php echo ASSETS_PATH; ?>css/theme.css" media="screen">
-    <link rel="stylesheet" href="<?php echo ASSETS_PATH; ?>css/print.css" media="print">
-    <link rel="stylesheet" href="<?php echo ROOT_PATH; ?>scp/css/typeahead.css"
-         media="screen" />
-    <link type="text/css" href="<?php echo ROOT_PATH; ?>css/ui-lightness/jquery-ui-1.10.3.custom.min.css"
-        rel="stylesheet" media="screen" />
-    <link rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/thread.css" media="screen">
-    <link rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/redactor.css" media="screen">
-    <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/font-awesome.min.css">
-    <script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/jquery-1.8.3.min.js"></script>
-    <script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/jquery-ui-1.10.3.custom.min.js"></script>
-    <script src="<?php echo ROOT_PATH; ?>js/jquery.multifile.js"></script>
-    <script src="<?php echo ROOT_PATH; ?>js/osticket.js"></script>
-    <script src="<?php echo ROOT_PATH; ?>scp/js/bootstrap-typeahead.js"></script>
-    <script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/redactor.min.js"></script>
-    <script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/redactor-osticket.js"></script>
-    <?php
-    if($ost && ($headers=$ost->getExtraHeaders())) {
-        echo "\n\t".implode("\n\t", $headers)."\n";
+  <meta charset="utf-8">
+  <title><?php echo Format::htmlchars($title); ?></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="<?php echo ROOT_PATH; ?>css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style>
+    body {
+      padding-top: 50px;
+      padding-bottom: 40px;
+    }   
+    @media (max-width: 980px) {
+      .navbar-text.pull-right {
+        float: none;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
     }
-    ?>
+  </style>
+  <link href="<?php echo ROOT_PATH; ?>css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+  <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+  <link href="<?php echo ROOT_PATH; ?>css/mystyle.css" rel="stylesheet" media="screen">
 </head>
 <body>
-    <div id="container">
-        <div id="header">
-            <a id="logo" href="<?php echo ROOT_PATH; ?>index.php"
-            title="Support Center"><img src="<?php echo ROOT_PATH; ?>logo.php" border=0 alt="<?php
-                echo $ost->getConfig()->getTitle(); ?>"
-                style="height: 5em"></a>
-            <p>
+  <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="index.php"><?php echo Format::htmlchars($title); ?></a>
+          <div class="nav-collapse collapse">
+              <p class="navbar-text pull-right">
              <?php
              if($thisclient && is_object($thisclient) && $thisclient->isValid()) {
-                 echo Format::htmlchars($thisclient->getName()).'&nbsp;-&nbsp;';
+                 echo $thisclient->getName().'&nbsp;-&nbsp;';
                  ?>
                 <?php
                 if($cfg->showRelatedTickets()) {?>
-                <a href="<?php echo ROOT_PATH; ?>tickets.php">My Tickets <b>(<?php echo $thisclient->getNumTickets(); ?>)</b></a> -
+                <a href="<?php echo ROOT_PATH; ?>tickets.php" class="navbar-link">My Tickets <b>(<?php echo $thisclient->getNumTickets(); ?>)</b></a> -
                 <?php
                 } ?>
-                <a href="<?php echo ROOT_PATH; ?>logout.php?auth=<?php echo $ost->getLinkToken(); ?>">Log Out</a>
+                <a href="<?php echo ROOT_PATH; ?>logout.php?auth=<?php echo $ost->getLinkToken(); ?>" class="navbar-link">Log Out</a>
              <?php
              }elseif($nav){ ?>
-                 Guest User - <a href="<?php echo ROOT_PATH; ?>login.php">Log In</a>
+                 Guest User - <a href="#myLogin" role="button" data-toggle="modal" class="navbar-link">Log In</a>
               <?php
              } ?>
             </p>
-        </div>
-        <?php
-        if($nav){ ?>
-        <ul id="nav">
-            <?php
+            <ul class="nav">
+          <?php
             if($nav && ($navs=$nav->getNavLinks()) && is_array($navs)){
                 foreach($navs as $name =>$nav) {
-                    echo sprintf('<li><a class="%s %s" href="%s">%s</a></li>%s',$nav['active']?'active':'',$name,(ROOT_PATH.$nav['href']),$nav['desc'],"\n");
+                    echo sprintf('<li class="%s %s"><a href="%s">%s</a></li>%s',$nav['active']?'active':'',$name,(ROOT_PATH.$nav['href']),$nav['desc'],"\n");
                 }
             } ?>
-        </ul>
-        <?php
-        }else{ ?>
-         <hr>
-        <?php
-        } ?>
-        <div id="content">
-
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+      <div class="container">
          <?php if($errors['err']) { ?>
-            <div id="msg_error"><?php echo $errors['err']; ?></div>
+            <div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button><?php echo $errors['err']; ?></div>
          <?php }elseif($msg) { ?>
-            <div id="msg_notice"><?php echo $msg; ?></div>
+            <div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button><?php echo $msg; ?></div>
          <?php }elseif($warn) { ?>
-            <div id="msg_warning"><?php echo $warn; ?></div>
+            <div class="alert alert-info"><button type="button" class="close" data-dismiss="alert">&times;</button><?php echo $warn; ?></div>
          <?php } ?>

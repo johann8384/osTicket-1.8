@@ -1,0 +1,16 @@
+/*!
+ * Bootstrap for osticket v1.0.0
+ *
+ * Copyright 2012 FantasyPC, Inc
+ * Licensed under the Apache License v2.0
+ * http://www.apache.org/licenses/LICENSE-2.0 
+!*/
+      
+.navbar .brand {
+  font-family: 'Droid Sans', Georgia, serif;
+  color:#fff; 
+}
+
+h1, h2, h3, h4, h5, h6, .container .hero-unit  {
+  font-family: 'Droid Sans', Georgia, serif; 
+}

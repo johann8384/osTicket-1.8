@@ -122,10 +122,8 @@ class StaffNav {
 
                         if($staff->canCreateTickets())
                             $subnav[]=array('desc'=>'New&nbsp;Ticket',
-                                            'title' => 'Open New Ticket',
                                             'href'=>'tickets.php?a=open',
                                             'iconclass'=>'newTicket',
-                                            'id' => 'new-ticket',
                                             'droponly'=>true);
                     }
                     break;
@@ -193,11 +191,9 @@ class AdminNav extends StaffNav{
             switch(strtolower($k)){
                 case 'dashboard':
                     $subnav[]=array('desc'=>'System&nbsp;Logs','href'=>'logs.php','iconclass'=>'logs');
-                    $subnav[]=array('desc'=>'Information','href'=>'system.php','iconclass'=>'preferences');
                     break;
                 case 'settings':
-                    $subnav[]=array('desc'=>'Company','href'=>'settings.php?t=pages','iconclass'=>'pages');
-                    $subnav[]=array('desc'=>'System','href'=>'settings.php?t=system','iconclass'=>'preferences');
+                    $subnav[]=array('desc'=>'System&nbsp;Preferences','href'=>'settings.php?t=system','iconclass'=>'preferences');
                     $subnav[]=array('desc'=>'Tickets','href'=>'settings.php?t=tickets','iconclass'=>'ticket-settings');
                     $subnav[]=array('desc'=>'Emails','href'=>'settings.php?t=emails','iconclass'=>'email-settings');
                     $subnav[]=array('desc'=>'Knowledgebase','href'=>'settings.php?t=kb','iconclass'=>'kb-settings');
@@ -210,9 +206,6 @@ class AdminNav extends StaffNav{
                                         'title'=>'Ticket&nbsp;Filters','iconclass'=>'ticketFilters');
                     $subnav[]=array('desc'=>'SLA&nbsp;Plans','href'=>'slas.php','iconclass'=>'sla');
                     $subnav[]=array('desc'=>'API&nbsp;Keys','href'=>'apikeys.php','iconclass'=>'api');
-                    $subnav[]=array('desc'=>'Pages', 'href'=>'pages.php','title'=>'Pages','iconclass'=>'pages');
-                    $subnav[]=array('desc'=>'Forms','href'=>'forms.php','iconclass'=>'forms');
-                    $subnav[]=array('desc'=>'Lists','href'=>'lists.php','iconclass'=>'lists');
                     break;
                 case 'emails':
                     $subnav[]=array('desc'=>'Emails','href'=>'emails.php', 'title'=>'Email Addresses', 'iconclass'=>'emailSettings');
@@ -290,7 +283,7 @@ class UserNav {
                                            'title'=>'View ticket status');
                 }
             } else {
-                $navs['status']=array('desc'=>'Check Ticket Status','href'=>'view.php','title'=>'');
+                $navs['status']=array('desc'=>'Check Ticket Status','href'=>'login.php','title'=>'');
             }
             $this->navs=$navs;
         }
